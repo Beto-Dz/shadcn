@@ -26,6 +26,9 @@ export default function Page() {
         onSelect={setDate}
         // si el día es 0 (domingo) o 1 (sabado) se bloquea
         disabled={(date) => date.getDay() === 0 || date.getDay() === 6}
+        footer={
+          date ? `Selected: ${date.toLocaleDateString()}` : "Pick a day."
+        }
         className="rounded-md border"
       />
 
