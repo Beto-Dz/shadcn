@@ -1,6 +1,5 @@
 'use client';
 
-import Autoplay from "embla-carousel-autoplay"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 export default function Page() {
@@ -26,9 +25,8 @@ export default function Page() {
           loop: true,
         }}
 
-        plugins={[
-          Autoplay({delay: 3000})
-        ]}
+        // uso de la prop definida por nosotros
+        autoplay={3000}
       >
         <CarouselContent>
           {images.map((_, index) => (
