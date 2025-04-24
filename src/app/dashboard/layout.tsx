@@ -18,6 +18,7 @@ const links = [
   { name: "command", href: "command" },
   { name: "combobox", href: "combobox" },
   { name: "menu-context", href: "menu-context" },
+  { name: "menubar", href: "menubar" },
 ].sort((a, b) => a.name.localeCompare(b.name));
 
 export default function DashboardLayout({
@@ -27,7 +28,7 @@ export default function DashboardLayout({
 }) {
   return (
     <>
-      <nav className="bg-white border-b border-gray-200 fixed z-30 w-full">
+      <nav className="bg-white border-b border-gray-200 fixed z-30 w-full print:hidden">
         <div className="px-3 py-3 lg:px-5 lg:pl-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center justify-start">
@@ -156,7 +157,7 @@ export default function DashboardLayout({
               </div>
             </div>
           </main>
-          <footer className="bg-white md:flex md:items-center md:justify-between shadow rounded-lg p-4 md:p-6 xl:p-8 my-6 mx-4">
+          <footer className="bg-white md:flex md:items-center md:justify-between shadow rounded-lg p-4 md:p-6 xl:p-8 my-6 mx-4 print:hidden">
             <ul className="flex items-center flex-wrap mb-6 md:mb-0">
               <li>
                 <a
