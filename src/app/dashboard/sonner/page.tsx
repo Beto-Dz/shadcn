@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Pokeapi, Result } from "@/types/pokeapi";
+import { Pokeapi } from "@/types/pokeapi";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -41,31 +41,33 @@ export default function Page() {
   };
 
   // funcion que obtiene un pokemon
-  const getPokemona = () => {
-    // promesa que internamente resuelve una petición http
-    const promise = new Promise<Result>((resolve, reject) => {
-      fetch("https://pokeapi.co/api/v2/pokemon?limit=10")
-        .then((res) => res.json())
-        .then((data) => resolve(data.results[0]))
-        .catch(() => reject());
-    });
+  // const getPokemona = () => {
+  //  // promesa que internamente resuelve una petición http
+  //   const promise = new Promise<Result>((resolve, reject) => {
+  //     fetch("https://pokeapi.co/api/v2/pokemon?limit=10")
+  //       .then((res) => res.json())
+  //       .then((data) => resolve(data.results[0]))
+  //       .catch(() => reject());
+  //   });
 
-    toast.promise(promise, {
-      loading: "Un momento...",
-      success: (data) => {
-        return data.name;
-      },
-      error: "Ocurrio un error",
-    });
-  };
+  //   toast.promise(promise, {
+  //     loading: "Un momento...",
+  //     success: (data) => {
+  //       return data.name;
+  //     },
+  //     error: "Ocurrio un error",
+  //   });
+  // };
 
   // funcion simplificada
   const getPokemon = () => {
     // funcion auto invocada
     const promise = (async () => {
+      console.log('peticion...')
       const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=10");
       const data: Pokeapi = await res.json();
-      return data.results[0];
+      const randomIndex = Math.floor(Math.random() * 10); // número del 0 al 9
+      return data.results[randomIndex];
     })();
 
     toast.promise(promise, {
