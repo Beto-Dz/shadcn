@@ -1,4 +1,5 @@
 "use client";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,7 +13,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const SHEET_SIDES = ["top", "right", "bottom", "left"] as const;
 
@@ -21,13 +22,26 @@ type Page = (typeof SHEET_SIDES)[number];
 export default function Page() {
   const [open, setOpen] = useState<boolean>(false);
 
+  useEffect(() => {
+    const keyPressed = (e: KeyboardEvent) => {
+      e.preventDefault();
+      if (e.key === "o" && (e.metaKey || e.ctrlKey)) {
+        setOpen((open) => !open);
+      }
+    };
+
+    document.addEventListener("keydown", keyPressed);
+
+    return () => document.removeEventListener("keydown", keyPressed);
+  }, []);
+
   return (
     <>
       <div className="p-4 border border-sky-500 rounded-2xl flex items-center justify-center gap-2">
         <Button variant="success" onClick={() => setOpen(!open)}>
-          Open with state
+          Open with state <Badge>ctrl + o</Badge>
         </Button>
-        <Sheet open={open}  onOpenChange={setOpen} >
+        <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
             <Button variant="success">Open trigger as child</Button>
           </SheetTrigger>
