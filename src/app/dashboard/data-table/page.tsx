@@ -9,7 +9,7 @@ export default async function Page() {
   const data = await fetchData();
 
   return (
-    <div className="flex justify-center gap-2">
+    <div className="">
       <DataTable columns={columns} data={data} />
     </div>
   );
