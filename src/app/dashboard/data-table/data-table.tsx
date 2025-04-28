@@ -21,6 +21,9 @@ import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMe
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { Trash2 } from "lucide-react";
+import { toast } from "sonner";
+import { Payment } from "@/data/payments.data";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -88,6 +91,9 @@ export function DataTable<TData, TValue>({ columns, data, }: DataTableProps<TDat
   //   clientName: true,
   // }
 
+  // estado para la seleccion de filas
+  const [rowSelection, setRowSelection] = useState({});
+
   // hook para la tabla
   const table = useReactTable({
     data,
@@ -99,12 +105,37 @@ export function DataTable<TData, TValue>({ columns, data, }: DataTableProps<TDat
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
+      rowSelection
     },
   });
+
+  // simulacion de eliminación
+  const dropsimulation = () => {
+    // recorriendo las filas (son ids)
+    table.getSelectedRowModel().rows.forEach( (row, index) => {
+      // obteniendo la data en original de la fila
+      const dataOriginal = row.original as Payment;
+
+      const retraso:number = 1000 * (index + 1);
+
+      // promesa para el toats
+      const promise = new Promise((resolv, ) => setTimeout( () => resolv(true), retraso ));
+
+      // usando el toast
+      toast.promise(promise, {
+          loading: `eliminando a ${dataOriginal.clientName}...`,
+          success: `Se la eliminado ${dataOriginal.clientName}`,
+          error: `Ha ocurrido un error`,
+          position: "top-right",
+        },
+      );
+    });
+  }
 
   return (
     <div className="flex flex-col gap-2">
@@ -125,10 +156,13 @@ export function DataTable<TData, TValue>({ columns, data, }: DataTableProps<TDat
         <SelectFilterComponent table={table} />
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-3">
+        <Button variant="destructive" onClick={dropsimulation} disabled={Object.keys(rowSelection).length <= 0} >
+            <Trash2 className="h-4 w-4" />
+        </Button>
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="success" className="ml-auto">
+              <Button variant="success">
                 Columnas
               </Button>
             </DropdownMenuTrigger>
@@ -209,24 +243,21 @@ export function DataTable<TData, TValue>({ columns, data, }: DataTableProps<TDat
         </Table>
       </div>
 
+
       {/* controles */}
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
+      <div className="flex items-center justify-between space-x-2 py-4">
+        <div className="text-sm text-muted-foreground">
+          {table.getFilteredSelectedRowModel().rows.length} de{" "}
+          {table.getFilteredRowModel().rows.length} fila(s) seleccionadas.
+        </div>
+        <div>
+          <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
+            Previous
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+            Next
+          </Button>
+        </div>
       </div>
     </div>
   );
