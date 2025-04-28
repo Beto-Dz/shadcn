@@ -12,25 +12,15 @@ import { toast } from "sonner";
 export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: "clientName",
-    header: () => <div className="text-center">Nombre Cliente</div>,
-    cell: ({ row }) => {
-      const value: string = row.getValue("clientName") as string;
-
-      return <div className="text-center">{value}</div>;
-    },
+    header: "Nombre Cliente",
   },
   {
     accessorKey: "email",
-    header: () => <div className="text-center">Nombre Cliente</div>,
-    cell: ({ row }) => {
-      const value: string = row.getValue("email") as string;
-
-      return <div className="text-center">{value}</div>;
-    },
+    header: "Nombre Cliente",
   },
   {
     accessorKey: "status",
-    header: () => <div className="text-center">Estatus</div>,
+    header: "Estatus",
     cell: ({ row }) => {
       // de la fila, recuperando el valor de status
       const status = row.getValue("status") as string;
@@ -56,7 +46,7 @@ export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: "amount",
     // el header perfectamente puede ser un jsx
-    header: () => <div className="text-center">Cantidad</div>,
+    header: "Cantidad",
     // de la celda, tomamos la fila
     cell: ({ row }) => {
       // de la fila accedemos al valor amount (accessorKey)
@@ -88,7 +78,8 @@ export const columns: ColumnDef<Payment>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem className="cursor-pointer"
+            <DropdownMenuItem
+              className="cursor-pointer"
               onClick={() => {
                 const promise = navigator.clipboard.writeText(payment.id);
 
@@ -96,7 +87,7 @@ export const columns: ColumnDef<Payment>[] = [
                   loading: "copiando...",
                   success: `Se ha copiado el id al portapapeles!`,
                   error: "error...",
-                  position: "top-right"
+                  position: "top-right",
                 });
               }}
             >
