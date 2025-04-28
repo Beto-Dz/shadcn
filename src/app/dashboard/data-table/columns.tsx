@@ -2,25 +2,56 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Payment } from "@/data/payments.data";
-import { ColumnDef } from "@tanstack/react-table";
+import { Column, ColumnDef, SortDirection } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal } from "lucide-react";
+import { ChevronDown, ChevronUp, MoreHorizontal } from "lucide-react";
 import { toast } from "sonner";
+
+// pequeño componente para definir el icono
+const SortedIcon = ({ isSorted }:{ isSorted: false | SortDirection })  => {
+  if( isSorted === 'asc' ) {
+    return <ChevronUp className="ml-2 h-4 w-4" />
+  } else if( isSorted === 'desc' ) {
+    return <ChevronDown className="ml-2 h-4 w-4" />
+  }
+
+  return null;
+}
+
+// pequeño componente para reutilizar el button
+const SortButton = ({ column, text }: { column: Column<any, any>, text: string }) => {
+  return <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+    { text }
+    < SortedIcon isSorted={column.getIsSorted()} /> 
+  </Button>
+}
 
 export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: "clientName",
-    header: "Nombre Cliente",
+    header: ({ column }) => {
+      return (
+        <SortButton column={column} text="Nombre de cliente"  />
+      )
+    },
   },
   {
     accessorKey: "email",
-    header: "Nombre Cliente",
+    header: ({ column }) => {
+      return (
+        <SortButton column={column} text="Correo electrónico"  />
+      )
+    },
   },
   {
     accessorKey: "status",
-    header: "Estatus",
+    header: ({ column }) => {
+      return (
+        <SortButton column={column} text="Estatus"  />
+      )
+    },
     cell: ({ row }) => {
       // de la fila, recuperando el valor de status
       const status = row.getValue("status") as string;
@@ -46,7 +77,11 @@ export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: "amount",
     // el header perfectamente puede ser un jsx
-    header: "Cantidad",
+    header: ({ column }) => {
+      return (
+        <SortButton column={column} text="Cantidad"  />
+      )
+    },
     // de la celda, tomamos la fila
     cell: ({ row }) => {
       // de la fila accedemos al valor amount (accessorKey)
