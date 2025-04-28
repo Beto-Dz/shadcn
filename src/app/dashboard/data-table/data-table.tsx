@@ -11,10 +11,12 @@ import {
   ColumnFiltersState,
   getFilteredRowModel,
   Table as dTable,
+  VisibilityState,
 } from "@tanstack/react-table";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue,} from "@/components/ui/select"
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,7 +38,7 @@ const InputFilterComponent = ({ table, placeholder, columnName }: { table: dTabl
   );
 };
 
-const SelectFilterComponent = ( { table, }: { table: dTable<any>;}) => {
+const SelectFilterComponent = ( { table }: { table: dTable<any>;}) => {
 
   const [value, setValue] = useState<string>("all");
 
@@ -75,6 +77,17 @@ export function DataTable<TData, TValue>({ columns, data, }: DataTableProps<TDat
   // estado para filtrar dinamicamente
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
+  // estado para la visibilidad de columnas
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+
+  // VisibilityState es de tipo record, lo que significa que en este caso es algo como:
+  // {
+  //   amount: true,
+  //   status: true,
+  //   email: true,
+  //   clientName: true,
+  // }
+
   // hook para la tabla
   const table = useReactTable({
     data,
@@ -85,9 +98,11 @@ export function DataTable<TData, TValue>({ columns, data, }: DataTableProps<TDat
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
     state: {
       sorting,
       columnFilters,
+      columnVisibility,
     },
   });
 
@@ -95,7 +110,7 @@ export function DataTable<TData, TValue>({ columns, data, }: DataTableProps<TDat
     <div className="flex flex-col gap-2">
       <h2 className="font-semibold text-2xl">Tabla con tanstack table</h2>
 
-      <div className="flex justify-evenly bg-emerald-50">
+      <div className="flex justify-evenly">
         <span>Filtros:</span>
         <InputFilterComponent
           table={table}
@@ -108,6 +123,35 @@ export function DataTable<TData, TValue>({ columns, data, }: DataTableProps<TDat
           columnName="email"
         />
         <SelectFilterComponent table={table} />
+      </div>
+
+      <div className="flex justify-end">
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="success" className="ml-auto">
+                Columnas
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide() && column.id !== 'actions')
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  )
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
       </div>
 
       <div className="rounded-md border">
