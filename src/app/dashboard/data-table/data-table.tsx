@@ -162,9 +162,23 @@ export function DataTable<TData, TValue>({ columns, data, }: DataTableProps<TDat
       </div>
 
       <div className="flex justify-end gap-3">
+        <div>
+          <Select onValueChange={(value) => table.setPageSize(Number(value)) } >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Líneas" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="10">10</SelectItem>
+              <SelectItem value="20">20</SelectItem>
+              <SelectItem value="30">30</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
         <Button variant="destructive" onClick={dropsimulation} disabled={Object.keys(rowSelection).length <= 0} >
             <Trash2 className="h-4 w-4" />
         </Button>
+
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="success">
