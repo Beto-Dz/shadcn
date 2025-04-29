@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Payment } from "@/data/payments.data";
-import { Column, ColumnDef, SortDirection } from "@tanstack/react-table";
+import { Column, ColumnDef, FilterFn, Row, SortDirection } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -19,6 +19,27 @@ const SortedIcon = ({ isSorted }:{ isSorted: false | SortDirection })  => {
   }
 
   return null;
+}
+
+
+// todo lo que queramos filtrar ahora va a pasar por esta funcion
+const myCustomFilterFn: FilterFn<Payment> = (row: Row<Payment>, columnId: string, filterValue: string, addMeta: (meta: any) => void): boolean => {
+
+  // obteniendo la fila original
+  const originalRow = row.original;
+
+  // obtenemos el valor en minusculas
+  filterValue = filterValue.toLocaleLowerCase();
+
+
+  // obteniendo el filtro separado por espacios para permitir el filtro por varios valores de columnas en un mismo input
+  // por ejemplo: "pending 1000" va a filtrar por status y amount
+  const filterValueSeparated = filterValue.split(' ');
+    // uniendo todos los valores separados en un solo string para hacer la comparación
+    const allRowUnion = `${originalRow.clientName} ${originalRow.email} ${originalRow.status} ${originalRow.amount}`.toLocaleLowerCase();
+
+    // si todos los valores separados están en el string
+    return filterValueSeparated.every((part) => allRowUnion.includes(part));
 }
 
 // pequeño componente para reutilizar el button
@@ -49,6 +70,17 @@ export const columns: ColumnDef<Payment>[] = [
         aria-label="Seleccionar fila"
       />
     ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "id",
+    header: "ID",
+    cell: ({ row }) => {
+      const id = row.getValue("id") as string;
+      return <span className="font-medium">{id?.substring(3, -1)}</span>;
+    },
+    filterFn: myCustomFilterFn,
     enableSorting: false,
     enableHiding: false,
   },

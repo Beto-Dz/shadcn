@@ -139,10 +139,15 @@ export function DataTable<TData, TValue>({ columns, data, }: DataTableProps<TDat
 
   return (
     <div className="flex flex-col gap-2">
-      <h2 className="font-semibold text-2xl">Tabla con tanstack table</h2>
+      <h2 className="font-bold text-2xl border-b border-stone-500/30 text-center">Tabla con tanstack table</h2>
 
-      <div className="flex justify-evenly">
+      <div className="flex justify-evenly items-center">
         <span>Filtros:</span>
+        <InputFilterComponent
+          table={table}
+          placeholder="Filtrado dinámico..."
+          columnName="id"
+        />
         <InputFilterComponent
           table={table}
           placeholder="Filtrar nombres..."
@@ -250,12 +255,12 @@ export function DataTable<TData, TValue>({ columns, data, }: DataTableProps<TDat
           {table.getFilteredSelectedRowModel().rows.length} de{" "}
           {table.getFilteredRowModel().rows.length} fila(s) seleccionadas.
         </div>
-        <div>
+        <div className=" flex gap-2">
           <Button variant="outline" size="sm" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-            Previous
+            Anterior
           </Button>
           <Button variant="outline" size="sm" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-            Next
+            Siguiente
           </Button>
         </div>
       </div>
