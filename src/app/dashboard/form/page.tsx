@@ -5,21 +5,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
 const Page = () => {
   // esquema de zod para validar el formulario
   const formSchema = z.object({
-    username: z.string().min(2).max(20),
+    username: z.string().min(2, 'Mínimo 2 caracteres').max(20, 'Máximo 20 caracteres'),
+    email: z.string().email('Email inválido').min(1, 'Campo requerido').max(50, 'Máximo 50 caracteres'),
   });
 
   // 1. Define your form.
@@ -27,6 +20,7 @@ const Page = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: "",
+      email: "",
     },
   });
 
@@ -46,13 +40,31 @@ const Page = () => {
             name="username"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
+                <FormLabel>Nombre de usuario</FormLabel>
                 <FormControl>
-                  <Input placeholder="shadcn" {...field} />
+                  <Input type="text" placeholder="shadcn" {...field} />
                 </FormControl>
                 <FormDescription>
-                  This is your public display name.
+                  Nombre público de tu cuenta.
                 </FormDescription>
+                {/* mensaje de error */}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Correo electrónico</FormLabel>
+                <FormControl>
+                  <Input type="email" placeholder="shadcn@gmail.com" {...field} />
+                </FormControl>
+                <FormDescription>
+                  Correo electrónico de tu cuenta
+                </FormDescription>
+                {/* mensaje de error */}
                 <FormMessage />
               </FormItem>
             )}
