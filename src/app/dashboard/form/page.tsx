@@ -5,27 +5,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import { toast } from "sonner";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 
 const Page = () => {
   // esquema de zod para validar el formulario
@@ -46,7 +35,18 @@ const Page = () => {
     dateOfBirth: z.date({
       required_error: "fecha de nacimiento requerida",
     }),
-  });
+    marketing_emails: z.boolean().default(false).optional(),
+    security_emails: z.boolean(),
+    termsAndConditions: z.boolean(),
+  }).refine((data) => 
+    // se valida que el checkbox de terminos y condiciones este marcado forzosamente
+    data.termsAndConditions === true, {
+      //  mensaje de error
+      message: "Debes aceptar los terminos y condiciones",
+      // se indica el path del error (el elemento que se va a marcar como error)
+      path: ["termsAndConditions"], 
+    });
+  // podemos anidar refines
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -56,6 +56,9 @@ const Page = () => {
       email: "",
       gender: "male",
       dateOfBirth: new Date(),
+      security_emails: true,
+      marketing_emails: false,
+      termsAndConditions: false,
     },
   });
 
@@ -194,6 +197,77 @@ const Page = () => {
               </FormItem>
             )}
           />
+
+          <div>
+            <h3 className="mb-4 text-lg font-medium">Email Notifications</h3>
+            <div className="space-y-4">
+              <FormField
+                control={form.control}
+                name="marketing_emails"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                    <div className="space-y-0.5">
+                      <FormLabel>Marketing emails</FormLabel>
+                      <FormDescription>
+                        Recive correos sobre productos y servicios de la empresa.
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="security_emails"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                    <div className="space-y-0.5">
+                      <FormLabel>Security emails</FormLabel>
+                      <FormDescription>
+                        Recibe correos sobre cambios de seguridad en tu cuenta.
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="termsAndConditions"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                    <div className="space-y-0.5">
+                      <FormLabel>Terminos y condiciones</FormLabel>
+                      <FormDescription>
+                        Terminos y condiciones de la empresa, debes aceptarlos para continuar.
+                      </FormDescription>
+                      <FormMessage />
+                    </div>
+                    
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        
+                        />
+                    </FormControl>
+                    
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
 
           <Button type="submit">Submit</Button>
         </form>
