@@ -207,7 +207,7 @@ export function DataTable<TData, TValue>({ columns, data, }: DataTableProps<TDat
           </DropdownMenu>
       </div>
 
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-hidden">
         <Table className="text-center">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
